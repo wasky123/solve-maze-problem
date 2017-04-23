@@ -34,7 +34,7 @@ class MazeCell:
 def FloodFillValues():
 	global walls, cell_stack, Values
 
-	walls = World.x
+	walls = obserworld.x
 
 	Values = [[-1 for i in range(walls)] for j in range(walls)] 
 
@@ -62,16 +62,16 @@ def SetCell( x, y, value):
 	if current_value == -1 or value < current_value:
 		Values[x][y] = value
 		# look up
-		if World.wall_check(x,y,0,-1) and y > 0:
+		if obserworld.wall_check(x,y,0,-1) and y > 0:
 			cell_stack.push(MazeCell(x,y-1,value+1))
 		# look right
-		if World.wall_check(x,y,1,0) and x < walls-1:
+		if obserworld.wall_check(x,y,1,0) and x < walls-1:
 			cell_stack.push(MazeCell(x+1,y,value+1))
 		# look down
-		if World.wall_check(x,y,0,1) and y < walls-1:
+		if obserworld.wall_check(x,y,0,1) and y < walls-1:
 			cell_stack.push(MazeCell(x,y+1,value+1))
 		# look left
-		if World.wall_check(x,y,-1,0) and x > 0:
+		if obserworld.wall_check(x,y,-1,0) and x > 0:
 			cell_stack.push(MazeCell(x-1,y,value+1))
 
 def get_value(x,y):
