@@ -205,13 +205,13 @@ def call_left(event):
 
 def set_maze_size(size):
 	if(size > 0):
-		chengli.set_maze_size(size)
+		randommaze.set_maze_size(size)
 
 def restart_game(trial):
 
 	global player, g7, restart, rows, columns
 
-	rows, columns = rows, columns = chengli.generate(7,trial)
+	rows, columns = rows, columns = randommaze.generate(7,trial)
 	if(gui_display):
 		render_grid()
 		render_player()
