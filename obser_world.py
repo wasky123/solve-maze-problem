@@ -1,5 +1,5 @@
 from Tkinter import *
-import chengli
+import randommaze
 import numpy as np
 master = Tk()
 
