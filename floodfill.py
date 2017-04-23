@@ -1,4 +1,4 @@
-import World
+import obserworld
 import numpy as np
 
 Values = []
