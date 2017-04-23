@@ -1,19 +1,19 @@
 from __future__ import print_function
-import shiqi
+import obserworld
 import threading
 import time
 import random
 import numpy as np
 import tensorflow as tf
-import weihan
+import floodfill
 from collections import deque
 
-actions = shiqi.actions
+actions = obserworld.actions
 
 gui_display = True
 
 if(not gui_display):
-	shiqi.gui_off()
+	obserworld.gui_off()
 
 
 GAMMA = 0.8
@@ -123,13 +123,13 @@ if checkpoint and checkpoint.model_checkpoint_path:
 def see_action(action,i,j):
 
 	if action == actions[0]:
-		reward, s2, t = shiqi.see_move(0, -1,i,j)
+		reward, s2, t = obserworld.see_move(0, -1,i,j)
 	elif action == actions[1]:
-		reward, s2, t= shiqi.see_move(1, 0,i,j)
+		reward, s2, t= obserworld.see_move(1, 0,i,j)
 	elif action == actions[2]:
-		reward, s2, t = shiqi.see_move(0, 1,i,j)
+		reward, s2, t = obserworld.see_move(0, 1,i,j)
 	elif action == actions[3]:
-		reward, s2, t = shiqi.see_move(-1, 0,i,j)
+		reward, s2, t = obserworld.see_move(-1, 0,i,j)
 	else:
 		return
 
@@ -138,20 +138,20 @@ def see_action(action,i,j):
 def do_action(action):
 
 	if action == actions[0]:
-		shiqi.do_move(0, -1)
+		obserworld.do_move(0, -1)
 	elif action == actions[1]:
-		shiqi.do_move(1, 0)
+		obserworld.do_move(1, 0)
 	elif action == actions[2]:
-		shiqi.do_move(0, 1)
+		obserworld.do_move(0, 1)
 	elif action == actions[3]:
-		shiqi.do_move(-1, 0)
+		obserworld.do_move(-1, 0)
 	else:
 		return
 
 def network_triangles():
 	D = deque()
-	for i in range(shiqi.x):
-		for j in range(shiqi.y):
+	for i in range(obserworld.x):
+		for j in range(obserworld.y):
 			state_peek_1 = shiqi.get_state((i,j))
 			state_peek_1 = np.reshape(state_peek_1,(1, 13, 13, 1)).astype(np.float32)
 			feed_dict = {state_input_1: state_peek_1}
@@ -177,7 +177,7 @@ def network_triangles():
 
 			if(gui_display):
 				for action in actions:
-					shiqi.set_cell_score(i,j,action,values_1)
+					obserworld.set_cell_score(i,j,action,values_1)
 
 	return D
 
@@ -187,10 +187,10 @@ def run():
     t = 0
     hit_one = True
 
-    weihan.FloodFillValues()
+    floodfill.FloodFillValues()
 
 
-    opt_steps = weihan.get_value(0,4)
+    opt_steps = floodfill.get_value(0,4)
 
     sub_trials = 1
 
@@ -201,11 +201,11 @@ def run():
     max_steps = -1
 
 
-    shiqi.set_maze_size(limit_of_mazes)
+    obserworld.set_maze_size(limit_of_mazes)
 
     while trials < number_trial or (number_trial == -1):
 
-    	state_1 = shiqi.get_state(shiqi.player)
+    	state_1 = obserworld.get_state(obserworld.player)
 
 
 
@@ -222,7 +222,7 @@ def run():
 
     	do_action(max_act)
 
-    	if shiqi.has_restarted() or (steps > max_steps and max_steps > 0):
+    	if obserworld.has_restarted() or (steps > max_steps and max_steps > 0):
 
     		if(steps==opt_steps or (trials < limit_of_mazes or limit_of_mazes < 0)):
     			trials+=1
@@ -235,11 +235,11 @@ def run():
 
     		print('at trial {}'.format(trials))
 
-    		shiqi.restart_game(trials)
+    		obserworld.restart_game(trials)
 
-    		weihan.FloodFillValues()
+    		floodfill.FloodFillValues()
 
-    		opt_steps = weihan.get_value(0,4)
+    		opt_steps = floodfill.get_value(0,4)
 
         	if save_point > 0 and trials % save_point == 0 and hit_one:
         		saver.save(sess, 'saved_networks/' + 'async_maze' + '-dqn', global_step = t)
@@ -276,7 +276,7 @@ def run():
 t = threading.Thread(target=run)
 t.daemon = True
 t.start()
-shiqi.start_game()
+obserworld.start_game()
 
 
 
